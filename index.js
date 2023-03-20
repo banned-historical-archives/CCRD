@@ -1,10 +1,12 @@
 import puppeteer from 'puppeteer';
 import path from 'path';
 import fs from 'fs-extra';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const sessionId = '';
-const ezId = '';
-const aspxauth = '';
+const sessionId = process.env.sessionId;
+const ezId = process.env.ezId;
+const aspxauth = process.env.aspxauth;
 const url = 'http://ccrd.usc.cuhk.edu.hk.easyaccess1.lib.cuhk.edu.hk/Contents.aspx';
 
 const safe_select = async (page, str, idx = 0) => {
@@ -45,7 +47,7 @@ const start = async (fidx = 0) => {
     headless: false,
   });
   const context = await browser.createIncognitoBrowserContext({
-    proxyServer: "http://127.0.0.1:1080",
+     proxyServer: "http://127.0.0.1:1080",
   });
   const page = await context.newPage();
   // const page = await browser.newPage();

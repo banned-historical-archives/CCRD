@@ -1,4 +1,6 @@
 
+# CCRD
+
 ### 目录说明
 
 ```
@@ -19,3 +21,10 @@ v3
 ```
 
 第三级目录是年份
+
+### 爬虫使用说明
+
+1. 安装nodejs
+2. npm install
+3. 复制.env.example -> .env 并修改cookies
+4. npm run start
