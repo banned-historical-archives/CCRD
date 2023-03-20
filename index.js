@@ -74,6 +74,7 @@ const start = async (fidx = 0) => {
   await page.setCookie(...cookies);
   await page.goto(url, { timeout: 30000 });
 
+  // 高度过低目录树可能报错
   await page.setViewport({ width: 1080, height: 2024 });
 
   const first_class_selector = `#TreeContent_TreeContent_TreeView1 table`;
