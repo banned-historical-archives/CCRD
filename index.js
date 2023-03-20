@@ -12,11 +12,11 @@ const safe_select = async (page, str, idx = 0) => {
   const t1 = Date.now();
   while (!target) {
     if (Date.now() - t1 > 50 * 1000) {
-        throw new Error('restart');
+      throw new Error("restart");
     }
     let t;
-    try{
-    t = (await page.$$(str));
+    try {
+      t = await page.$$(str);
     } catch (e) {}
     target = t ? t[idx] : undefined;
     if (!target) await sleep(2000);
@@ -28,7 +28,7 @@ const safe_eval = async (page, str, validator) => {
   const t1 = Date.now();
   while (!validator(res)) {
     if (Date.now() - t1 > 50 * 1000) {
-        throw new Error('restart');
+      throw new Error("restart");
     }
     try {
       res = await page.evaluate(str);
@@ -36,8 +36,8 @@ const safe_eval = async (page, str, validator) => {
     if (!validator(res)) await sleep(2000);
   }
   return res;
-}
-const sleep = (t) => new Promise(resolve => setTimeout(resolve, t));
+};
+const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
 let browser;
 
 const start = async (fidx = 0) => {
@@ -52,12 +52,9 @@ const start = async (fidx = 0) => {
   global.page = page;
   const cookies = [
     ["ASP.NET_SessionId", sessionId],
-    ["ezproxy", "http://easyaccess1.lib.cuhk.edu.hk,"+ezId],
+    ["ezproxy", "http://easyaccess1.lib.cuhk.edu.hk," + ezId],
     ["ezproxyl", "http://easyaccess1.lib.cuhk.edu.hk," + ezId],
-    [
-      ".ASPXAUTH",
-      aspxauth,
-    ],
+    [".ASPXAUTH", aspxauth],
   ].map((i) => ({
     name: i[0],
     value: i[1],
