@@ -20,7 +20,11 @@ const safe_select = async (page, str, idx = 0) => {
     try {
       t = await page.$$(str);
     } catch (e) {}
-    target = t ? t[idx] : undefined;
+    if (idx === -1 && t) {
+      target = t[t.length - 1];
+    } else {
+      target = t ? t[idx] : undefined;
+    }
     if (!target) await sleep(2000);
   }
   return target;
@@ -148,7 +152,7 @@ const start = async (fidx = 0) => {
             await safe_select(page, `.nuumerricButton`);
             let target;
             if (!(await page.$$(`.nuumerricButton[value="${p}"]`))[0]) {
-              target = await safe_select(page, `[value="..."]`);
+              target = await safe_select(page, `[value="..."]`, -1);
             } else {
               target = await safe_select(
                 page,
@@ -164,6 +168,7 @@ const start = async (fidx = 0) => {
             'document.getElementById("MainContent_MainContent_ListView1_DataPager1_ctl00_StartRowLabel").innerText',
             (x) => x && x.toString().trim() === `${(p - 1) * n_per_page + 1}`
           );
+          console.log('page start', page_start_idx, 'page', p);
 
           const articles_selector = "#MainContent_MainContent_ListView1_Tr1 a";
 
