@@ -25,7 +25,7 @@ const safe_select = async (page, str, idx = 0) => {
     } else {
       target = t ? t[idx] : undefined;
     }
-    if (!target) await sleep(2000);
+    if (!target) await sleep(200);
   }
   return target;
 };
@@ -39,7 +39,7 @@ const safe_eval = async (page, str, validator) => {
     try {
       res = await page.evaluate(str);
     } catch (e) {}
-    if (!validator(res)) await sleep(2000);
+    if (!validator(res)) await sleep(200);
   }
   return res;
 };
@@ -213,9 +213,9 @@ const start = async (fidx = 0) => {
               )
             );
 
-            await sleep(2000);
+            await sleep(1000);
             await page.goBack({ timeout: 3000 });
-            await sleep(2000);
+            await sleep(1000);
           }
         }
       }
