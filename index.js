@@ -74,7 +74,7 @@ const start = async (fidx = 0) => {
   await page.setCookie(...cookies);
   await page.goto(url, { timeout: 30000 });
 
-  await page.setViewport({ width: 1080, height: 1024 });
+  await page.setViewport({ width: 1080, height: 2024 });
 
   const first_class_selector = `#TreeContent_TreeContent_TreeView1 table`;
   await safe_select(page, first_class_selector);
