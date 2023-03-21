@@ -14,7 +14,7 @@ const safe_select = async (page, str, idx = 0) => {
   const t1 = Date.now();
   while (!target) {
     if (Date.now() - t1 > 50 * 1000) {
-      throw new Error("restart");
+      throw new Error("select timeout");
     }
     let t;
     try {
@@ -34,7 +34,7 @@ const safe_eval = async (page, str, validator) => {
   const t1 = Date.now();
   while (!validator(res)) {
     if (Date.now() - t1 > 50 * 1000) {
-      throw new Error("restart");
+      throw new Error("eval timeout");
     }
     try {
       res = await page.evaluate(str);
@@ -87,6 +87,7 @@ const start = async (fidx = 0) => {
       first_class_selector,
       first_idx
     );
+    console.log('first_class clicked', first_idx);
     (await first_class.$$("a"))[0].click();
     await sleep(2000);
 
@@ -95,6 +96,7 @@ const start = async (fidx = 0) => {
     const second_class_length = (await page.$$(second_class_selector)).length;
     for (let second_idx = 0; second_idx < second_class_length; ++second_idx) {
       if (second_idx > 0) {
+        console.log('second class folded', second_idx);
         // 把前面的二级目录收起来，否则可能报错
         (
           await (
@@ -108,6 +110,7 @@ const start = async (fidx = 0) => {
         second_class_selector,
         second_idx
       );
+      console.log('second class unfold');
       (await second_class.$$("a"))[0].click();
       await sleep(2000);
 
@@ -133,8 +136,18 @@ const start = async (fidx = 0) => {
           `document.body.querySelectorAll('${third_class_selector} a')[${idx}].getAttribute('href')`,
           (x) => x
         );
-        const r = await page.evaluate(href.replace("javascript:", ""));
-        // target.click();
+        // 先把原来列表total清空，否则点击后无法判断右侧列表是否更新
+        await page.evaluate(`(() => {
+          const a = document.getElementById("MainContent_MainContent_ListView1_DataPager1_ctl00_TotalRowsLabel");
+          if (a) {
+           a.innerText="";
+          }
+        })();
+          `);
+
+        // 这里不能模拟点击，否则可能报错
+        console.log('third class clicked');
+        await page.evaluate(href.replace("javascript:", ""));
 
         await sleep(2000);
 
@@ -153,8 +166,10 @@ const start = async (fidx = 0) => {
             await safe_select(page, `.nuumerricButton`);
             let target;
             if (!(await page.$$(`.nuumerricButton[value="${p}"]`))[0]) {
+              console.log('... clicked')
               target = await safe_select(page, `[value="..."]`, -1);
             } else {
+              console.log('next page clicked', p)
               target = await safe_select(
                 page,
                 `.nuumerricButton[value="${p}"]`
@@ -190,6 +205,7 @@ const start = async (fidx = 0) => {
               `${articles_selector}`,
               aidx % n_per_page
             );
+            console.log('article clicked');
             target.click();
 
             // 等待加载完成
@@ -233,6 +249,7 @@ const start = async (fidx = 0) => {
       await start(idx);
       break;
     } catch (e) {
+      console.log(e);
       await browser.close();
       await sleep(1000);
     }
