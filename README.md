@@ -50,4 +50,6 @@ v3
 1. 安装nodejs
 2. npm install
 3. 复制.env.example -> .env 并修改cookies
-4. npm run start
+4. IDX=0 npm run start
+
+IDX是数据库id，例如0表示中国文化大革命文库。
