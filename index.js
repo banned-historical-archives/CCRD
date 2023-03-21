@@ -98,11 +98,20 @@ const start = async (fidx = 0) => {
       if (second_idx > 0) {
         console.log('second class folded', second_idx);
         // 把前面的二级目录收起来，否则可能报错
-        (
-          await (
-            await safe_select(page, second_class_selector, second_idx - 1)
-          ).$$("a")
-        )[0].click();
+        await safe_eval(
+          page,
+          `(() => {
+          const a = document.body.querySelectorAll('${second_class_selector}')[${second_idx - 1}];
+          if (a) {
+            const b = a.querySelectorAll('a')[0];
+            if (b.innerText) return 0;
+b.click();
+return 1;
+          }
+          return 0;
+        })()`,
+          (x) => x
+        );
         await sleep(3000);
       }
       const second_class = await safe_select(
@@ -186,6 +195,10 @@ const start = async (fidx = 0) => {
           );
           console.log('page start', page_start_idx, 'page', p);
 
+          fs.writeFileSync(
+            `v3/${first_idx}/${second_idx}/${idx}/list${p}.html`,
+            await page.evaluate("document.body.innerHTML")
+          );
           const articles_selector = "#MainContent_MainContent_ListView1_Tr1 a";
 
           await safe_select(page, articles_selector);
