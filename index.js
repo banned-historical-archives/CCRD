@@ -170,6 +170,8 @@ return 1;
         const n_per_page = 25;
         const total_page = Math.ceil(total / n_per_page);
         let aidx = 0;
+        const dir = `v3/${first_idx}/${second_idx}/${idx}`;
+        fs.ensureDirSync(dir);
         for (let p = 1; p <= total_page; ++p) {
           if (p !== 1) {
             await safe_select(page, `.nuumerricButton`);
@@ -205,8 +207,6 @@ return 1;
 
           const article_length = (await page.$$(articles_selector)).length;
           for (let i = 0; i < article_length; ++aidx, ++i) {
-            const dir = `v3/${first_idx}/${second_idx}/${idx}`;
-            fs.ensureDirSync(dir);
             if (fs.existsSync(path.join(dir, aidx + ".html"))) {
               console.log("skip", path.join(dir, aidx + ".html"));
               continue;
