@@ -56,8 +56,13 @@ v3
 1. 安装nodejs
 2. npm install
 3. 复制.env.example -> .env 并修改cookies
-4. IDX=0 npm run start
+4. npm run start
 
-IDX是数据库id，例如0表示中国文化大革命文库。
 
-默认使用 http://127.0.0.1:1080 代理
+#### 其他环境变量: 
+
+爬虫范围设置(可选）:
+
+* FIRST_CLASS_IDX_START:数据库id，例如0表示中国文化大革命文库。
+* FIRST_CLASS_IDX_END
+* PROXY: 代理, 例如http://127.0.0.1:1080

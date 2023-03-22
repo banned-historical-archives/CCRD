@@ -8,9 +8,6 @@
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "node",
-      "env": {
-        "IDX": "1"
-      },
       "runtimeArgs": ["--experimental-vm-modules", "./index.js"]
     },
     {

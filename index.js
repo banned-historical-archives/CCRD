@@ -20,8 +20,9 @@ const safe_select = async (page, str, idx = 0) => {
     try {
       t = await page.$$(str);
     } catch (e) {}
-    if (idx === -1 && t) {
-      target = t[t.length - 1];
+    if (idx === -1) {
+      
+      target = t ? t[t.length - 1] : undefined;
     } else {
       target = t ? t[idx] : undefined;
     }
@@ -46,12 +47,12 @@ const safe_eval = async (page, str, validator) => {
 const sleep = (t) => new Promise((resolve) => setTimeout(resolve, t));
 let browser;
 
-const start = async (fidx = 0) => {
+const start = async (first_class_idx_start, first_class_idx_end) => {
   browser = await puppeteer.launch({
     headless: false,
   });
   const context = await browser.createIncognitoBrowserContext({
-     proxyServer: "http://127.0.0.1:1080",
+     proxyServer: process.env['PROXY'],
   });
   const page = await context.newPage();
   // const page = await browser.newPage();
@@ -77,21 +78,21 @@ const start = async (fidx = 0) => {
   // 高度过低目录树可能报错
   await page.setViewport({ width: 1080, height: 2024 });
 
-  const first_class_selector = `#TreeContent_TreeContent_TreeView1 table`;
+  const first_class_selector = `#TreeContent_TreeContent_TreeView1 > table`;
   await safe_select(page, first_class_selector);
   const first_class_length = (await page.$$(first_class_selector)).length;
 
-  for (let first_idx = fidx; first_idx < first_class_length; ++first_idx) {
+  for (let first_idx = first_class_idx_start; first_idx < first_class_length && first_id <= first_class_idx_end; ++first_idx) {
+    console.log('first_class clicked', first_idx);
     const first_class = await safe_select(
       page,
-      first_class_selector,
-      first_idx
+      `${first_class_selector}:nth-of-type(${first_idx + 1})`,
     );
-    console.log('first_class clicked', first_idx);
-    (await first_class.$$("a"))[0].click();
+    const candidates = (await first_class.$$("a"));
+    candidates[0].click();
     await sleep(2000);
 
-    const second_class_selector = `#TreeContent_TreeContent_TreeView1n${first_idx}Nodes > table`;
+    const second_class_selector = `${first_class_selector}:nth-of-type(${first_idx + 1}) + div > table`;
     await safe_select(page, second_class_selector);
     const second_class_length = (await page.$$(second_class_selector)).length;
     for (let second_idx = 0; second_idx < second_class_length; ++second_idx) {
@@ -131,8 +132,7 @@ return 1;
         .length;
 
       for (let idx = 0; idx < third_class_length; ++idx) {
-        if (fs.existsSync(`v3/${first_idx}/${second_idx}/${idx + 1}`)) {
-          console.log("skip", first_idx, second_idx, idx);
+        if (fs.existsSync(`v3/${first_idx}/${second_idx}/${idx}/done`)) {
           continue;
         }
         const target = await safe_select(
@@ -178,6 +178,11 @@ return 1;
             let target;
             if (!(await page.$$(`.nuumerricButton[value="${p}"]`))[0]) {
               console.log('... clicked')
+              await safe_eval(
+                page,
+                "document.body.querySelectorAll(\"[value='...']\").length",
+                (x) => (p === 11 ? 1 : 2)
+              );
               target = await safe_select(page, `[value="..."]`, -1);
             } else {
               console.log('next page clicked', p)
@@ -248,8 +253,17 @@ return 1;
             await sleep(1000);
           }
         }
+
+        // 已完成的打个标记
+        fs.writeFileSync(
+            `v3/${first_idx}/${second_idx}/${idx}/done`,
+            '123'
+          );
       }
     }
+    // 收起第一级
+    (await safe_select(page, '#TreeContent_TreeContent_TreeView1n' + first_idx)).click();
+    await sleep(1000);
   }
   // await page.screenshot();
 };
@@ -257,9 +271,10 @@ return 1;
 (async () => {
   while (true) {
     try {
-      const idx = parseInt(process.env["IDX"] || "0");
-      console.log(idx);
-      await start(idx);
+      const idx_start = parseInt(process.env["FIRST_CLASS_IDX_START"] || "0");
+      const idx_end = parseInt(process.env["FIRST_CLASS_IDX_END"] || "3");
+      console.log(idx_start, idx_end);
+      await start(idx_start, idx_end);
       break;
     } catch (e) {
       console.log(e);
