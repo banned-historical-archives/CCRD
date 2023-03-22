@@ -64,10 +64,10 @@ function parseHTML(html) {
 (async () => {
   let root = "v3";
 
-  for (let i of fs.readdirSync(root)) {
-    for (let j of fs.readdirSync(`${root}/${i}`)) {
-      for (let k of fs.readdirSync(`${root}/${i}/${j}`)) {
-        for (let l of fs.readdirSync(`${root}/${i}/${j}/${k}`)) {
+  for (let i of (fs.readdirSync(root)).filter(x => /^\d+/.test(x))) {
+    for (let j of fs.readdirSync(`${root}/${i}`).filter(x => /^\d+/.test(x))) {
+      for (let k of fs.readdirSync(`${root}/${i}/${j}`).filter(x => /^\d+/.test(x))) {
+        for (let l of fs.readdirSync(`${root}/${i}/${j}/${k}`).filter(x => /^\d+/.test(x))) {
           const html = fs
             .readFileSync(`${root}/${i}/${j}/${k}/${l}`)
             .toString();

@@ -9,6 +9,10 @@ const ezId = process.env.ezId;
 const aspxauth = process.env.aspxauth;
 const url = 'http://ccrd.usc.cuhk.edu.hk.easyaccess1.lib.cuhk.edu.hk/Contents.aspx';
 
+const remove_hidden_input = (x) => {
+  return x.replace(/\<input\ type\=\"hidden\".*\>/g, "");
+}
+
 const safe_select = async (page, str, idx = 0) => {
   let target;
   const t1 = Date.now();
@@ -204,7 +208,7 @@ return 1;
 
           fs.writeFileSync(
             `v3/${first_idx}/${second_idx}/${idx}/list${p}.html`,
-            await page.evaluate("document.body.innerHTML")
+            remove_hidden_input(await page.evaluate("document.body.innerHTML"))
           );
           const articles_selector = "#MainContent_MainContent_ListView1_Tr1 a";
 
@@ -237,7 +241,7 @@ return 1;
 
             fs.writeFileSync(
               path.join(dir, aidx + ".html"),
-              await safe_eval(
+              remove_hidden_input(await safe_eval(
                 page,
                 `document.body.innerHTML`,
                 (x) =>
@@ -245,7 +249,7 @@ return 1;
                   x.indexOf('<script>$("div.demo").scrollTop(300);</script>') >=
                     0 &&
                   x.indexOf("文章全文：") >= 0
-              )
+              ))
             );
 
             await sleep(1000);
