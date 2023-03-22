@@ -82,7 +82,7 @@ const start = async (first_class_idx_start, first_class_idx_end) => {
   await safe_select(page, first_class_selector);
   const first_class_length = (await page.$$(first_class_selector)).length;
 
-  for (let first_idx = first_class_idx_start; first_idx < first_class_length && first_id <= first_class_idx_end; ++first_idx) {
+  for (let first_idx = first_class_idx_start; first_idx < first_class_length && first_idx <= first_class_idx_end; ++first_idx) {
     console.log('first_class clicked', first_idx);
     const first_class = await safe_select(
       page,
