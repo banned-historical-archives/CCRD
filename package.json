@@ -14,6 +14,7 @@
     "dotenv": "^16.0.3",
     "fs-extra": "^11.1.0",
     "jsdom": "^21.1.1",
+    "node-html-parser": "^6.1.5",
     "puppeteer": "^19.7.5"
   }
 }

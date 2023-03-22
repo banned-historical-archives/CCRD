@@ -1,5 +1,5 @@
-import {JSDOM} from 'jsdom'
 import fs from 'fs';
+import { parse } from 'node-html-parser';
 import { ensureDirSync, } from "fs-extra";
 
 function toPlainText(node) {
@@ -22,8 +22,8 @@ function toPlainText(node) {
 }
 
 function parseHTML(html) {
-  const dom = new JSDOM(html);
-  const main = dom.window.document.querySelector(".main");
+  const dom = parse(html);
+  const main = dom.querySelector(".main");
   let find_first_table = false;
   const res = [];
 
@@ -112,10 +112,19 @@ function parseHTML(html) {
       else debugger;
     } else if (tagName === "FONT") {
       if (text.trim() === "来源：") {
-        res.push({ type: "source" });
+        res.push({ text, type: "source" });
       } else {
         debugger;
       }
+    } else if (tagName === "TBODY") {
+        // TODO
+        res.push({ text: text.trim(), type: "paragraph" });
+    } else if (tagName === "PRE") {
+        // TODO
+        res.push({ text: text.trim(), type: "paragraph" });
+    } else if (tagName === "DIV") {
+        // TODO
+        res.push({ text: text.trim(), type: "paragraph" });
     } else {
       if (tagName) {
         debugger;
@@ -125,7 +134,6 @@ function parseHTML(html) {
       }
     }
   }
-  dom.window.close();
   return {
     authors: author_arr,
     contents: res,
@@ -133,29 +141,34 @@ function parseHTML(html) {
 }
 
 const parseList = (html) => {
-  const dom = new JSDOM(html);
+  const dom = parse(html);
   const res = [];
-  const links = dom.window.document.querySelectorAll(
+  const links = dom.querySelectorAll(
     "#MainContent_MainContent_ListView1_itemPlaceholderContainer a"
   );
-  const spans = dom.window.document.querySelectorAll(
+  const spans = dom.querySelectorAll(
     "#MainContent_MainContent_ListView1_itemPlaceholderContainer span"
   );
   for (let i = 0; i < links.length; ++i) {
     res.push({ title: links[i].textContent, date: spans[i].textContent });
   }
-  dom.window.close();
   return res;
 }
 
 (async () => {
   let root = "v3";
 
-  for (let i of (fs.readdirSync(root)).filter(x => /^\d+/.test(x))) {
-    for (let j of fs.readdirSync(`${root}/${i}`).filter(x => /^\d+/.test(x))) {
-        for (let k of fs.readdirSync(`${root}/${i}/${j}`).filter(x => /^\d+/.test(x))) {
+  for (let i of fs.readdirSync(root).filter((x) => /^\d+/.test(x))) {
+    for (let j of fs
+      .readdirSync(`${root}/${i}`)
+      .filter((x) => /^\d+/.test(x))) {
+      for (let k of fs
+        .readdirSync(`${root}/${i}/${j}`)
+        .filter((x) => /^\d+/.test(x))) {
         const list_data = [];
-        for (let l of fs.readdirSync(`${root}/${i}/${j}/${k}`).filter(x => /^list/.test(x))) {
+        for (let l of fs
+          .readdirSync(`${root}/${i}/${j}/${k}`)
+          .filter((x) => /^list/.test(x))) {
           const html = fs
             .readFileSync(`${root}/${i}/${j}/${k}/${l}`)
             .toString();
@@ -168,7 +181,6 @@ const parseList = (html) => {
         for (let l of fs
           .readdirSync(`${root}/${i}/${j}/${k}`)
           .filter((x) => /^\d+/.test(x))) {
-
           const idx = parseInt(l);
           const html = fs
             .readFileSync(`${root}/${i}/${j}/${k}/${l}`)
@@ -197,19 +209,26 @@ const parseList = (html) => {
           // } else {
           //   break;
           // }
-            
-          const title = list_data[idx].title.replace(/^\d+\. ?/, '');
+
+          const title = list_data[idx].title.replace(/^\d+\. ?/, "");
           const date = list_data[idx].date;
-          ensureDirSync(
-            `json/${i}/${j}/${k}`,
-          );
+          ensureDirSync(`json/${i}/${j}/${k}`);
           fs.writeFileSync(
-            `json/${i}/${j}/${k}/[${idx}][${date}]${title}.json`,
+            `json/${i}/${j}/${k}/${idx}.json`,
             JSON.stringify({
               title,
               date,
               ...res,
             })
+          );
+          ensureDirSync(`txt/${i}/${j}/${k}`);
+          fs.writeFileSync(
+            `txt/${i}/${j}/${k}/${idx}.txt`,
+`标题：${title}
+日期：${date}
+作者：${res.authors.join(',')}
+
+${res.contents.map(x => x.text).join('\n')}`
           );
         }
         console.log(i, j, k);
