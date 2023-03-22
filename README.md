@@ -51,6 +51,15 @@ v3
 
 文稿: {序号,从0开始}.html
 
+## txt格式
+
+https://github.com/banned-historical-archives/CCRD/tree/txt
+
+## json格式
+
+https://github.com/banned-historical-archives/CCRD/tree/json
+
+
 ### 爬虫使用说明
 
 1. 安装nodejs
