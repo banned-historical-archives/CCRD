@@ -1,0 +1,18 @@
+name: build
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  container-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 17.9
+      - run: NODE_OPTIONS="--max-old-space-size=8192" npm install && node test.js
+      - run: git checkout --orphan x
+      - run: git reset --hard
+      - run: git add txt && git commit -m i && git push origin x:txt
