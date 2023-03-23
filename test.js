@@ -168,7 +168,10 @@ const parseList = (html) => {
         const list_data = [];
         for (let l of fs
           .readdirSync(`${root}/${i}/${j}/${k}`)
-          .filter((x) => /^list/.test(x))) {
+          .filter((x) => /^list/.test(x))
+          .sort((a, b) =>
+            parseInt(a.substring(4)) > parseInt(b.substring(4)) ? 1 : -1
+          )) {
           const html = fs
             .readFileSync(`${root}/${i}/${j}/${k}/${l}`)
             .toString();
