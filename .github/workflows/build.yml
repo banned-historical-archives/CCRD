@@ -22,3 +22,8 @@ jobs:
       - run: git add txt
       - run: git commit -m i
       - run: git push origin x:txt -f
+      - run: git checkout --orphan y
+      - run: git reset --hard
+      - run: git add json
+      - run: git commit -m i
+      - run: git push origin y:json -f
