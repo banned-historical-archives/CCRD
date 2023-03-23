@@ -3,6 +3,8 @@ on:
   push:
     branches: ['main']
 
+permissions:
+  contents: write
 jobs:
   container-job:
     runs-on: ubuntu-latest
