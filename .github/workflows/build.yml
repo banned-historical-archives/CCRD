@@ -15,4 +15,6 @@ jobs:
       - run: NODE_OPTIONS="--max-old-space-size=8192" npm install && node test.js
       - run: git checkout --orphan x
       - run: git reset --hard
-      - run: git add txt && git commit -m i && git push origin x:txt
+      - run: git config --global user.email "you@example.com"
+      - run: git config --global user.name "Your Name"
+      - run: git add txt && git commit -m i && git push origin x:txt -f
