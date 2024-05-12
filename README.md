@@ -1,6 +1,10 @@
 
 # CCRD 中国当代政治运动史数据库
 
+## 线上访问
+
+已作为子数据库收录至 https://banned-historical-archives.github.io/
+
 ### 目录说明
 
 ```
