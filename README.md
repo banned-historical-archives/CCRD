@@ -1,11 +1,7 @@
 
 # CCRD 中国当代政治运动史数据库
 
-## 原始地址
-
 http://ccrd.usc.cuhk.edu.hk/Default.aspx
-
-## 线上访问
 
 已作为子数据库收录至 https://banned-historical-archives.github.io/
 
