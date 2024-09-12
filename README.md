@@ -59,10 +59,13 @@ v3
 
 https://github.com/banned-historical-archives/CCRD/tree/txt
 
+https://github.com/banned-historical-archives/CCRD/archive/refs/heads/txt.zip
+
 ## json格式
 
 https://github.com/banned-historical-archives/CCRD/tree/json
 
+https://github.com/banned-historical-archives/CCRD/archive/refs/heads/json.zip
 
 ### 爬虫使用说明
 
